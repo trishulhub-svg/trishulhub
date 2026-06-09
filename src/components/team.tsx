@@ -7,31 +7,31 @@ import GradientText from '@/components/gradient-text'
 const teamMembers = [
   {
     name: 'Kiran',
-    role: 'Founder & Lead Developer',
-    bio: 'Full-stack architect passionate about building scalable, performant web applications.',
+    role: 'Full-Stack Developer & Co-Founder',
+    bio: 'Full-stack architect passionate about building scalable, performant web applications with modern technologies and clean code principles.',
     initials: 'K',
     accent: '#0D9488',
   },
   {
     name: 'Taroon',
-    role: 'UI/UX Designer',
-    bio: 'Design thinker who creates intuitive interfaces that users love to interact with.',
+    role: 'CEO & Co-Founder',
+    bio: 'Visionary leader driving Trishulhub\'s strategic growth and fostering a culture of innovation, excellence, and client-centric solutions.',
     initials: 'T',
     accent: '#14FFEC',
   },
   {
     name: 'Akshat',
-    role: 'Digital Marketing Lead',
-    bio: 'Growth strategist who turns data into actionable insights and measurable results.',
+    role: 'Full-Stack Developer & SMM Lead',
+    bio: 'Dual-threat developer and social media strategist who bridges technical execution with compelling digital marketing campaigns.',
     initials: 'A',
     accent: '#F59E0B',
   },
   {
-    name: 'Pruthviraj',
-    role: 'Backend Developer',
-    bio: 'System architect focused on building robust, secure, and efficient server solutions.',
+    name: 'Pruthvi',
+    role: 'Management & Operations Head',
+    bio: 'Operations expert who streamlines workflows, manages project lifecycles, and ensures every delivery meets the highest standards.',
     initials: 'P',
-    accent: '#0D9488',
+    accent: '#7B2FBE',
   },
 ]
 

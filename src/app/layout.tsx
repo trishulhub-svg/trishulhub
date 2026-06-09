@@ -5,6 +5,8 @@ import { Toaster } from "@/components/ui/toaster";
 import SmoothScrollProvider from "@/components/providers/smooth-scroll-provider";
 import CustomCursor from "@/components/custom-cursor";
 import NoiseOverlay from "@/components/noise-overlay";
+import GoogleAnalytics from "@/components/google-analytics";
+import AgentationWrapper from "@/components/agentation-wrapper";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -56,11 +58,13 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased bg-[#0A0A0B] text-[#F5F2ED]`}
       >
+        <GoogleAnalytics />
         <SmoothScrollProvider>
           <CustomCursor />
           <NoiseOverlay />
           {children}
           <Toaster />
+          <AgentationWrapper />
         </SmoothScrollProvider>
       </body>
     </html>
