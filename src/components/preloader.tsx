@@ -1,12 +1,17 @@
 'use client'
 
 import { useState, useEffect, useCallback, useRef } from 'react'
-import { createRoot } from 'react-dom/client'
 
 /* ──────────────────────────────────────────────
    TrishulHub Premium Preloader
    SVG-based 3D trishul with CSS transforms,
    GSAP-style timeline via requestAnimationFrame
+   
+   Layout order (per screenshot):
+   1. Trishul logo (top, largest)
+   2. TRISHULHUB brand text (bold, white)
+   3. Percentage counter (small, light, cyan)
+   4. Progress bar (thin, cyan gradient)
    ────────────────────────────────────────────── */
 
 function TrishulSVG() {
@@ -124,7 +129,7 @@ export default function Preloader() {
 
   const animate = useCallback(() => {
     const startTime = performance.now()
-    const totalDuration = 3500 // 3.5s total for progress
+    const totalDuration = 3500
 
     const tick = (now: number) => {
       const elapsed = now - startTime
@@ -136,7 +141,7 @@ export default function Preloader() {
 
       setProgress(currentValue)
 
-      if (rawProgress >= 0.43 && !brandVisible) {
+      if (rawProgress >= 0.3 && !brandVisible) {
         setBrandVisible(true)
       }
 
@@ -144,12 +149,10 @@ export default function Preloader() {
         animFrameRef.current = requestAnimationFrame(tick)
       } else {
         setProgress(100)
-        // Start exit phase
         setTimeout(() => {
           setPhase('exit')
           setTimeout(() => {
             setPhase('done')
-            // Dispatch custom event so main content can reveal
             window.dispatchEvent(new CustomEvent('preloaderDone'))
           }, 900)
         }, 200)
@@ -160,7 +163,6 @@ export default function Preloader() {
   }, [brandVisible])
 
   useEffect(() => {
-    // Phase 1: Enter animation
     const enterTimer = setTimeout(() => {
       setPhase('rotate')
       animate()
@@ -199,8 +201,8 @@ export default function Preloader() {
         className="trishul-wrapper"
         style={{
           position: 'relative',
-          width: 200,
-          height: 200,
+          width: 160,
+          height: 160,
           willChange: 'transform, opacity',
           animation:
             phase === 'enter'
@@ -224,29 +226,45 @@ export default function Preloader() {
         <TrishulSVG />
       </div>
 
-      {/* Percentage Counter */}
+      {/* TRISHULHUB Brand Text — prominent, bold, white */}
       <div
         style={{
-          marginTop: 40,
+          marginTop: 28,
+          fontSize: 28,
+          fontWeight: 700,
+          letterSpacing: 10,
+          textTransform: 'uppercase' as const,
+          color: '#FFFFFF',
+          opacity: brandVisible ? 1 : 0,
+          transform: brandVisible ? 'translateY(0)' : 'translateY(20px)',
+          transition: 'opacity 0.8s ease-out, transform 0.8s ease-out',
+        }}
+      >
+        TRISHULHUB
+      </div>
+
+      {/* Percentage Counter — small, light, cyan */}
+      <div
+        style={{
+          marginTop: 16,
           textAlign: 'center',
           fontFamily: "'Kanit', system-ui, sans-serif",
-          fontSize: 72,
-          fontWeight: 800,
-          color: '#FFFFFF',
-          letterSpacing: 4,
+          fontSize: 22,
+          fontWeight: 400,
+          color: '#00DEFF',
+          letterSpacing: 2,
           lineHeight: 1,
           fontVariantNumeric: 'tabular-nums',
         }}
       >
-        {progress}
-        <span style={{ fontSize: 36, fontWeight: 600, opacity: 0.6 }}>%</span>
+        {progress}%
       </div>
 
       {/* Progress Bar */}
       <div
         style={{
-          marginTop: 32,
-          width: 200,
+          marginTop: 20,
+          width: 160,
           height: 2,
           background: 'rgba(255,255,255,0.1)',
           borderRadius: 2,
@@ -263,23 +281,6 @@ export default function Preloader() {
             transition: 'width 0.1s linear',
           }}
         />
-      </div>
-
-      {/* Brand Text */}
-      <div
-        style={{
-          marginTop: 24,
-          fontSize: 24,
-          fontWeight: 700,
-          letterSpacing: 8,
-          textTransform: 'uppercase' as const,
-          color: '#FFFFFF',
-          opacity: brandVisible ? 1 : 0,
-          transform: brandVisible ? 'translateY(0)' : 'translateY(20px)',
-          transition: 'opacity 0.8s ease-out, transform 0.8s ease-out',
-        }}
-      >
-        TRISHULHUB
       </div>
     </div>
   )
