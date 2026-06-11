@@ -7,7 +7,7 @@ import GradientText from '@/components/gradient-text'
 const teamMembers = [
   {
     name: 'Kiran',
-    role: 'Full-Stack Developer & Co-Founder',
+    role: 'Full Stack Developer',
     bio: 'Full-stack architect passionate about building scalable, performant web applications with modern technologies and clean code principles.',
     initials: 'K',
     accent: '#0D9488',

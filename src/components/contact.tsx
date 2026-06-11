@@ -187,7 +187,7 @@ export default function Contact() {
                         placeholder="Tell us about your project..."
                       />
                     </div>
-                    <div className="flex justify-end">
+                    <div className="flex justify-center">
                       <MagneticButton>
                         <button
                           type="submit"

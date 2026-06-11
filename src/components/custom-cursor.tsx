@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState, useCallback } from 'react'
 import { motion, useMotionValue, useSpring } from 'framer-motion'
 
 export default function CustomCursor() {
@@ -8,87 +8,91 @@ export default function CustomCursor() {
   const [isVisible, setIsVisible] = useState(false)
   const [isMobile, setIsMobile] = useState(false)
   const isHoveringRef = useRef(false)
+  const hasSetup = useRef(false)
 
-  const cursorX = useMotionValue(0)
-  const cursorY = useMotionValue(0)
-  const ringX = useMotionValue(0)
-  const ringY = useMotionValue(0)
+  const cursorX = useMotionValue(-100)
+  const cursorY = useMotionValue(-100)
+  const ringX = useMotionValue(-100)
+  const ringY = useMotionValue(-100)
 
-  const springConfig = { damping: 25, stiffness: 200, mass: 0.5 }
+  // Snappier spring — less perceived lag
+  const springConfig = { damping: 30, stiffness: 400, mass: 0.25 }
   const ringXSpring = useSpring(ringX, springConfig)
   const ringYSpring = useSpring(ringY, springConfig)
+
+  const handleMouseMove = useCallback((e: MouseEvent) => {
+    cursorX.set(e.clientX)
+    cursorY.set(e.clientY)
+    ringX.set(e.clientX)
+    ringY.set(e.clientY)
+    setIsVisible(true)
+  }, [cursorX, cursorY, ringX, ringY])
 
   useEffect(() => {
     const prefersReducedMotion = window.matchMedia(
       '(prefers-reduced-motion: reduce)'
     ).matches
     const isMobileDevice = window.matchMedia('(max-width: 768px)').matches
+
+    setIsMobile(isMobileDevice)
+
     if (prefersReducedMotion || isMobileDevice) {
       return
     }
 
-    const checkMobile = () => {
-      setIsMobile(window.matchMedia('(max-width: 768px)').matches)
-    }
-    window.addEventListener('resize', checkMobile)
+    if (hasSetup.current) return
+    hasSetup.current = true
 
-    const handleMouseMove = (e: MouseEvent) => {
-      cursorX.set(e.clientX)
-      cursorY.set(e.clientY)
-      ringX.set(e.clientX)
-      ringY.set(e.clientY)
-      setIsVisible(true)
-    }
-
-    const handleMouseEnter = () => {
+    const handleHoverEnter = () => {
       isHoveringRef.current = true
       setIsHovering(true)
     }
-    const handleMouseLeave = () => {
+    const handleHoverLeave = () => {
       isHoveringRef.current = false
       setIsHovering(false)
     }
     const handleDocumentLeave = () => setIsVisible(false)
     const handleDocumentEnter = () => setIsVisible(true)
 
-    document.addEventListener('mousemove', handleMouseMove)
+    const checkMobile = () => {
+      setIsMobile(window.matchMedia('(max-width: 768px)').matches)
+    }
+
+    document.addEventListener('mousemove', handleMouseMove, { passive: true })
     document.addEventListener('mouseleave', handleDocumentLeave)
     document.addEventListener('mouseenter', handleDocumentEnter)
+    window.addEventListener('resize', checkMobile)
 
-    const interactiveElements = document.querySelectorAll(
-      'a, button, input, textarea, select, [role="button"], [data-cursor-hover]'
-    )
-
-    interactiveElements.forEach((el) => {
-      el.addEventListener('mouseenter', handleMouseEnter)
-      el.addEventListener('mouseleave', handleMouseLeave)
+    // Event delegation on body — much faster than per-element MutationObserver
+    document.body.addEventListener('mouseover', (e) => {
+      const target = e.target as HTMLElement
+      if (
+        target.closest(
+          'a, button, input, textarea, select, [role="button"], [data-cursor-hover]'
+        )
+      ) {
+        handleHoverEnter()
+      }
     })
-
-    // Use MutationObserver to detect new interactive elements
-    const observer = new MutationObserver(() => {
-      const newInteractiveElements = document.querySelectorAll(
-        'a, button, input, textarea, select, [role="button"], [data-cursor-hover]'
-      )
-      newInteractiveElements.forEach((el) => {
-        el.addEventListener('mouseenter', handleMouseEnter)
-        el.addEventListener('mouseleave', handleMouseLeave)
-      })
+    document.body.addEventListener('mouseout', (e) => {
+      const target = e.target as HTMLElement
+      if (
+        target.closest(
+          'a, button, input, textarea, select, [role="button"], [data-cursor-hover]'
+        )
+      ) {
+        handleHoverLeave()
+      }
     })
-
-    observer.observe(document.body, { childList: true, subtree: true })
 
     return () => {
       document.removeEventListener('mousemove', handleMouseMove)
       document.removeEventListener('mouseleave', handleDocumentLeave)
       document.removeEventListener('mouseenter', handleDocumentEnter)
-      interactiveElements.forEach((el) => {
-        el.removeEventListener('mouseenter', handleMouseEnter)
-        el.removeEventListener('mouseleave', handleMouseLeave)
-      })
-      observer.disconnect()
       window.removeEventListener('resize', checkMobile)
+      hasSetup.current = false
     }
-  }, [cursorX, cursorY, ringX, ringY])
+  }, [handleMouseMove])
 
   if (isMobile) return null
 
@@ -96,7 +100,7 @@ export default function CustomCursor() {
     <>
       {/* Dot */}
       <motion.div
-        className="fixed top-0 left-0 z-[9999] pointer-events-none"
+        className="fixed top-0 left-0 z-[9999] pointer-events-none will-change-transform"
         style={{
           x: cursorX,
           y: cursorY,
@@ -121,7 +125,7 @@ export default function CustomCursor() {
 
       {/* Ring */}
       <motion.div
-        className="fixed top-0 left-0 z-[9998] pointer-events-none"
+        className="fixed top-0 left-0 z-[9998] pointer-events-none will-change-transform"
         style={{
           x: ringXSpring,
           y: ringYSpring,
