@@ -87,6 +87,14 @@
 }
 
 /* ==========================================
+   GPU ACCELERATION & PERFORMANCE
+   ========================================== */
+.gpu-accel {
+  will-change: transform;
+  transform: translateZ(0);
+}
+
+/* ==========================================
    CUSTOM CURSOR - HIDE DEFAULT
    ========================================== */
 html {
@@ -126,19 +134,15 @@ a, button, input, textarea, select, [role="button"], [data-cursor-hover] {
 
 /* ==========================================
    ANIMATED MESH GRADIENT BACKGROUND
+   Optimized: Reduced animation complexity,
+   GPU-accelerated transforms only
    ========================================== */
 @keyframes meshGradient {
   0%, 100% {
     background-position: 0% 50%, 100% 50%, 50% 0%, 50% 100%;
   }
-  25% {
-    background-position: 100% 0%, 0% 100%, 100% 50%, 0% 50%;
-  }
   50% {
     background-position: 100% 100%, 0% 0%, 0% 50%, 100% 50%;
-  }
-  75% {
-    background-position: 0% 100%, 100% 0%, 50% 100%, 50% 0%;
   }
 }
 
@@ -149,8 +153,9 @@ a, button, input, textarea, select, [role="button"], [data-cursor-hover] {
     radial-gradient(ellipse at 50% 20%, rgba(123,47,190,0.2) 0%, transparent 50%),
     radial-gradient(ellipse at 50% 80%, rgba(13,148,136,0.15) 0%, transparent 50%);
   background-size: 200% 200%, 200% 200%, 200% 200%, 200% 200%;
-  animation: meshGradient 15s ease-in-out infinite;
+  animation: meshGradient 20s ease-in-out infinite;
   mix-blend-mode: screen;
+  will-change: background-position;
 }
 
 /* ==========================================
@@ -213,8 +218,8 @@ a, button, input, textarea, select, [role="button"], [data-cursor-hover] {
    ========================================== */
 .glass-panel {
   background: rgba(255, 255, 255, 0.05);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
   border: 1px solid rgba(255, 255, 255, 0.08);
 }
 
@@ -261,14 +266,17 @@ a, button, input, textarea, select, [role="button"], [data-cursor-hover] {
 
 .float-animation {
   animation: float 6s ease-in-out infinite;
+  will-change: transform;
 }
 
 .float-slow {
   animation: floatSlow 8s ease-in-out infinite;
+  will-change: transform;
 }
 
 .float-reverse {
   animation: floatReverse 7s ease-in-out infinite;
+  will-change: transform;
 }
 
 /* ==========================================
@@ -295,6 +303,121 @@ a, button, input, textarea, select, [role="button"], [data-cursor-hover] {
 }
 
 /* ==========================================
+   INFINITE SCROLL ANIMATION
+   ========================================== */
+@keyframes scrollLeft {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+@keyframes scrollRight {
+  0% {
+    transform: translateX(-50%);
+  }
+  100% {
+    transform: translateX(0);
+  }
+}
+
+.animate-scroll-left {
+  animation: scrollLeft 30s linear infinite;
+  will-change: transform;
+}
+
+.animate-scroll-right {
+  animation: scrollRight 30s linear infinite;
+  will-change: transform;
+}
+
+/* ==========================================
+   PRELOADER ANIMATIONS
+   ========================================== */
+@keyframes trishulEnter {
+  0% {
+    transform: scale(0) rotateY(0deg);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(1) rotateY(0deg);
+    opacity: 1;
+  }
+}
+
+@keyframes trishulRotate {
+  0% {
+    transform: rotateY(0deg);
+  }
+  100% {
+    transform: rotateY(360deg);
+  }
+}
+
+@keyframes glowPulse {
+  0%, 100% {
+    opacity: 0.5;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.05);
+  }
+}
+
+.preloader-exit {
+  animation: preloaderExit 0.8s cubic-bezier(0.745, 0.06, 0.18, 0.935) forwards !important;
+}
+
+@keyframes preloaderExit {
+  0% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1.5);
+    opacity: 0;
+  }
+}
+
+/* ==========================================
+   MAIN CONTENT REVEAL AFTER PRELOADER
+   ========================================== */
+.main-content-initial {
+  opacity: 0;
+}
+
+.main-content-reveal {
+  animation: contentReveal 0.8s cubic-bezier(0.25, 0.4, 0.25, 1) forwards;
+}
+
+@keyframes contentReveal {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+.navbar-reveal {
+  animation: navbarReveal 0.8s cubic-bezier(0.25, 0.4, 0.25, 1) forwards;
+}
+
+@keyframes navbarReveal {
+  0% {
+    transform: translateY(-100px);
+    opacity: 0;
+  }
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+/* ==========================================
    REDUCED MOTION
    ========================================== */
 @media (prefers-reduced-motion: reduce) {
@@ -317,6 +440,10 @@ a, button, input, textarea, select, [role="button"], [data-cursor-hover] {
 
   a, button, input, textarea, select, [role="button"] {
     cursor: auto;
+  }
+
+  .preloader-container {
+    display: none !important;
   }
 }
 
@@ -343,27 +470,6 @@ a, button, input, textarea, select, [role="button"], [data-cursor-hover] {
   background: rgba(13, 148, 136, 0.15) !important;
   border-color: rgba(13, 148, 136, 0.3) !important;
   color: #14FFEC !important;
-}
-
-/* ==========================================
-   SCROLL ANIMATIONS (Tech Stack)
-   ========================================== */
-@keyframes scrollLeft {
-  0% { transform: translateX(0); }
-  100% { transform: translateX(-50%); }
-}
-
-@keyframes scrollRight {
-  0% { transform: translateX(-50%); }
-  100% { transform: translateX(0); }
-}
-
-.animate-scroll-left {
-  animation: scrollLeft 30s linear infinite;
-}
-
-.animate-scroll-right {
-  animation: scrollRight 30s linear infinite;
 }
 
 @layer base {

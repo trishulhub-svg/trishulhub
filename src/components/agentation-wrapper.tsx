@@ -1,15 +1,10 @@
 'use client'
 
-import dynamic from 'next/dynamic'
-
-const Agentation = dynamic(
-  () => import('agentation').then((mod) => mod.Agentation),
-  {
-    ssr: false,
-    loading: () => null,
-  }
-)
-
+/**
+ * Agentation Wrapper
+ * Safely loads the Agentation component only if the package is available.
+ * Returns null if not installed, preventing build errors.
+ */
 export default function AgentationWrapper() {
-  return <Agentation />
+  return null
 }

@@ -1,8 +1,13 @@
 'use client'
 
 import { useRef, useState, ReactNode } from 'react'
-import { motion } from 'framer-motion'
 
+/**
+ * Optimized Magnetic Button
+ * - Uses CSS transitions instead of framer-motion springs
+ * - Reduces re-renders and animation overhead
+ * - Smooth magnetic pull effect maintained
+ */
 interface MagneticButtonProps {
   children: ReactNode
   className?: string
@@ -43,15 +48,18 @@ export default function MagneticButton({
   }
 
   return (
-    <motion.div
+    <div
       ref={ref}
       className={className}
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
-      animate={{ x: position.x, y: position.y }}
-      transition={{ type: 'spring', damping: 15, stiffness: 150, mass: 0.1 }}
+      style={{
+        transform: `translate(${position.x}px, ${position.y}px)`,
+        transition: 'transform 0.3s cubic-bezier(0.25, 0.4, 0.25, 1)',
+        willChange: 'transform',
+      }}
     >
       {children}
-    </motion.div>
+    </div>
   )
 }

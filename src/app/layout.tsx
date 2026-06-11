@@ -7,6 +7,7 @@ import CustomCursor from "@/components/custom-cursor";
 import NoiseOverlay from "@/components/noise-overlay";
 import GoogleAnalytics from "@/components/google-analytics";
 import AgentationWrapper from "@/components/agentation-wrapper";
+import Preloader from "@/components/preloader";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -19,9 +20,12 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Trishulhub — Building Digital Experiences That Matter",
+  title: {
+    default: "Trishulhub — Building Digital Experiences That Matter",
+    template: "%s — Trishulhub",
+  },
   description:
-    "Trishulhub is a web development and digital services agency specializing in web development, digital marketing, social media management, UI/UX design, e-commerce solutions, and CRM solutions.",
+    "Trishulhub is a digital solutions agency specializing in web development, digital marketing, social media management, UI/UX design, e-commerce solutions, and CRM solutions. Based in India, serving globally.",
   keywords: [
     "Trishulhub",
     "Web Development",
@@ -30,21 +34,47 @@ export const metadata: Metadata = {
     "E-Commerce",
     "CRM Solutions",
     "Social Media Management",
+    "Full-Stack Development",
+    "Next.js",
+    "React",
+    "TypeScript",
     "India",
+    "Digital Agency",
   ],
-  authors: [{ name: "Trishulhub" }],
+  authors: [{ name: "Trishulhub", url: "https://trishulhub.in" }],
+  creator: "Trishulhub",
+  publisher: "Trishulhub",
+  metadataBase: new URL("https://trishulhub.in"),
   openGraph: {
     title: "Trishulhub — Building Digital Experiences That Matter",
     description:
-      "Web development and digital services agency. We craft powerful web solutions, drive digital growth, and help businesses thrive.",
-    type: "website",
+      "Digital solutions agency specializing in web development, marketing, and design. We craft powerful web solutions and help businesses thrive.",
+    url: "https://trishulhub.in",
     siteName: "Trishulhub",
+    type: "website",
+    locale: "en_IN",
   },
   twitter: {
     card: "summary_large_image",
     title: "Trishulhub — Building Digital Experiences That Matter",
     description:
-      "Web development and digital services agency. We craft powerful web solutions, drive digital growth, and help businesses thrive.",
+      "Digital solutions agency specializing in web development, marketing, and design. We craft powerful web solutions and help businesses thrive.",
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-video-preview": -1,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+    },
+  },
+  icons: {
+    icon: "/logo.svg",
+    shortcut: "/logo.svg",
+    apple: "/logo.svg",
   },
 };
 
@@ -55,10 +85,27 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className="dark" suppressHydrationWarning>
+      <head>
+        <GoogleAnalytics />
+        {/* Preload Kanit font for preloader counter */}
+        <link
+          rel="preconnect"
+          href="https://fonts.googleapis.com"
+        />
+        <link
+          rel="preconnect"
+          href="https://fonts.gstatic.com"
+          crossOrigin="anonymous"
+        />
+        <link
+          href="https://fonts.googleapis.com/css2?family=Kanit:wght@600;800&display=swap"
+          rel="stylesheet"
+        />
+      </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased bg-[#0A0A0B] text-[#F5F2ED]`}
       >
-        <GoogleAnalytics />
+        <Preloader />
         <SmoothScrollProvider>
           <CustomCursor />
           <NoiseOverlay />

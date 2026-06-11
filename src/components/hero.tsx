@@ -50,9 +50,8 @@ export default function Hero() {
     offset: ['start start', 'end start'],
   })
 
-  const parallaxY1 = useTransform(scrollYProgress, [0, 1], [0, -150])
-  const parallaxY2 = useTransform(scrollYProgress, [0, 1], [0, -80])
-  const parallaxY3 = useTransform(scrollYProgress, [0, 1], [0, -200])
+  // Reduced from 3 parallax layers to 2 — less main-thread work
+  const parallaxY1 = useTransform(scrollYProgress, [0, 1], [0, -100])
   const opacity = useTransform(scrollYProgress, [0, 0.8], [1, 0])
 
   const handleScrollTo = (href: string) => {
@@ -66,7 +65,7 @@ export default function Hero() {
     <section
       id="home"
       ref={sectionRef}
-      className="relative min-h-screen flex items-center justify-center overflow-hidden pt-20"
+      className="relative min-h-screen flex items-center justify-center overflow-hidden"
     >
       {/* Mesh Gradient Background */}
       <div className="absolute inset-0 mesh-gradient opacity-60" />
@@ -74,39 +73,16 @@ export default function Hero() {
       {/* Grid Pattern Overlay */}
       <div className="absolute inset-0 grid-pattern opacity-40" />
 
-      {/* Parallax Decorative Elements */}
+      {/* Parallax Decorative Element — reduced to 1 for performance */}
       <motion.div
         style={{ y: parallaxY1 }}
-        className="absolute top-20 left-[10%] w-72 h-72 rounded-full bg-[#0D9488]/10 blur-[100px] pointer-events-none"
-      />
-      <motion.div
-        style={{ y: parallaxY2 }}
-        className="absolute bottom-20 right-[15%] w-96 h-96 rounded-full bg-[#14FFEC]/5 blur-[120px] pointer-events-none"
-      />
-      <motion.div
-        style={{ y: parallaxY3 }}
-        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] rounded-full bg-[#7B2FBE]/5 blur-[150px] pointer-events-none"
+        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] rounded-full bg-[#0D9488]/8 blur-[150px] pointer-events-none will-change-transform"
       />
 
-      {/* Floating Glassmorphic Shapes */}
-      <motion.div
-        style={{ y: parallaxY1 }}
-        className="absolute top-[15%] right-[20%] hidden lg:block"
-      >
-        <div className="float-animation w-16 h-16 rounded-xl glass-panel rotate-12 opacity-40" />
-      </motion.div>
-      <motion.div
-        style={{ y: parallaxY2 }}
-        className="absolute bottom-[25%] left-[8%] hidden lg:block"
-      >
-        <div className="float-slow w-24 h-24 rounded-2xl glass-panel -rotate-12 opacity-30" />
-      </motion.div>
-      <motion.div
-        style={{ y: parallaxY3 }}
-        className="absolute top-[40%] right-[8%] hidden lg:block"
-      >
-        <div className="float-reverse w-12 h-12 rounded-lg glass-panel rotate-45 opacity-50" />
-      </motion.div>
+      {/* Single floating shape — reduced from 3 */}
+      <div className="absolute top-[15%] right-[20%] hidden lg:block">
+        <div className="float-animation w-16 h-16 rounded-xl glass-panel rotate-12 opacity-30" />
+      </div>
 
       {/* Main Content */}
       <motion.div
